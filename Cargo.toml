@@ -3,11 +3,11 @@ name = "retry-cmd"
 version = "0.1.0"
 authors = ["Timo Furrer <tuxtimo@gmail.com>"]
 description = "Retry commands on the command line without the all the loops you always used!"
+readme = "README.md"
 license = "MIT"
-license-file = "LICENSE"
 homepage = "https://github.com/timofurrer/retry"
 repository = "https://github.com/timofurrer/retry"
 edition = "2018"
 
 [dependencies]
-clap = "*"
+clap = "2"
