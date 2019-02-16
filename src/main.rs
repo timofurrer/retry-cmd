@@ -69,7 +69,7 @@ fn main() {
         .arg(
             Arg::with_name("exit_code")
                 .short("c")
-                .long("exit-code")
+                .long("exitcode")
                 .value_name("EXIT_CODE")
                 .help("The expected exit code to stop retrying")
                 .takes_value(true)
