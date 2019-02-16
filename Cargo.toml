@@ -1,6 +1,6 @@
 [package]
 name = "retry-cmd"
-version = "0.4.0"
+version = "0.4.1"
 authors = ["Timo Furrer <tuxtimo@gmail.com>"]
 description = "Retry commands on the command line without all the loops you always used!"
 readme = "README.md"
