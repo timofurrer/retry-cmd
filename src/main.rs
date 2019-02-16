@@ -20,12 +20,25 @@ fn retry(config: RetryConfig) {
     while i <= config.max || config.max == 0 {
         let status = match Command::new(&config.cmd[0])
             .args(&config.cmd[1..config.cmd.len()])
-            .stdin(if config.quiet { Stdio::null() } else { Stdio::inherit() })
-            .stdout(if config.quiet { Stdio::null() } else { Stdio::inherit() })
-            .stderr(if config.quiet { Stdio::null() } else { Stdio::inherit() })
-            .status() {
-                Ok(s) => s,
-                Err(err) => panic!("Failed to execute command: {}", err)
+            .stdin(if config.quiet {
+                Stdio::null()
+            } else {
+                Stdio::inherit()
+            })
+            .stdout(if config.quiet {
+                Stdio::null()
+            } else {
+                Stdio::inherit()
+            })
+            .stderr(if config.quiet {
+                Stdio::null()
+            } else {
+                Stdio::inherit()
+            })
+            .status()
+        {
+            Ok(s) => s,
+            Err(err) => panic!("Failed to execute command: {}", err),
         };
 
         match status.code() {
@@ -34,7 +47,10 @@ fn retry(config: RetryConfig) {
                 break;
             }
             Some(code) => println!("[Retry {}] Command failed with exit code {}", i, code),
-            None => println!("[Retry {}] Command failed because it was termianted by a signal", i),
+            None => println!(
+                "[Retry {}] Command failed because it was termianted by a signal",
+                i
+            ),
         }
 
         if i != config.max {
@@ -81,7 +97,7 @@ fn main() {
             Arg::with_name("quiet")
                 .short("q")
                 .long("quiet")
-                .help("Be quiet. Suppress command output")
+                .help("Be quiet. Suppress command output"),
         )
         .setting(AppSettings::TrailingVarArg)
         .arg(
@@ -104,7 +120,7 @@ fn main() {
     });
     let exitcode = match matches.value_of("exit_code").unwrap_or_default().parse() {
         Ok(c) => c,
-        Err(_) => panic!("The given exit code option must be an Integer")
+        Err(_) => panic!("The given exit code option must be an Integer"),
     };
     let quiet = matches.is_present("quiet");
     let cmd: Vec<&str> = matches.values_of("command").unwrap().collect();
