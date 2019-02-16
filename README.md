@@ -1,6 +1,6 @@
 # retry
 
-Retry commands on the command line without the all the loops you always used!
+Retry commands on the command line without all the loops you always used!
 
 ```bash
 retry --max 10 -- curl -I https://unstable.site
