@@ -1,4 +1,4 @@
-use std::process::Command;
+use std::process::{Command, Stdio};
 use std::thread;
 use std::time::Duration;
 
@@ -11,6 +11,7 @@ struct RetryConfig<'a> {
     max: u32,
     interval: Duration,
     expected_exitcode: i32,
+    quiet: bool,
     cmd: Vec<&'a str>,
 }
 
@@ -19,6 +20,9 @@ fn retry(config: RetryConfig) {
     while i <= config.max || config.max == 0 {
         let status = Command::new(&config.cmd[0])
             .args(&config.cmd[1..config.cmd.len()])
+            .stdin(if config.quiet { Stdio::null() } else { Stdio::inherit() })
+            .stdout(if config.quiet { Stdio::null() } else { Stdio::inherit() })
+            .stderr(if config.quiet { Stdio::null() } else { Stdio::inherit() })
             .status()
             .unwrap();
 
@@ -71,6 +75,12 @@ fn main() {
                 .takes_value(true)
                 .default_value("0"),
         )
+        .arg(
+            Arg::with_name("quiet")
+                .short("q")
+                .long("quiet")
+                .help("Be quiet. Suppress command output")
+        )
         .setting(AppSettings::TrailingVarArg)
         .arg(
             Arg::with_name("command")
@@ -94,12 +104,14 @@ fn main() {
         Ok(c) => c,
         Err(_) => panic!("The given exit code option must be an Integer")
     };
+    let quiet = matches.is_present("quiet");
     let cmd: Vec<&str> = matches.values_of("command").unwrap().collect();
 
     let config = RetryConfig {
         max: max_retries,
         interval: interval,
         expected_exitcode: exitcode,
+        quiet: quiet,
         cmd: cmd,
     };
 

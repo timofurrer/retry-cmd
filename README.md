@@ -11,6 +11,9 @@ retry --max 10 --interval 5 -- curl -I https://unstable.site
 
 # Stop retrying if exit code is 1
 retry --exitcode 1 -- curl -I https://unstable.site
+
+# Suppress stdout and stderr from the command
+retry --quiet -- curl -I https://unstable.site
 ```
 
 ## Installation
