@@ -18,13 +18,15 @@ struct RetryConfig<'a> {
 fn retry(config: RetryConfig) {
     let mut i = 1;
     while i <= config.max || config.max == 0 {
-        let status = Command::new(&config.cmd[0])
+        let status = match Command::new(&config.cmd[0])
             .args(&config.cmd[1..config.cmd.len()])
             .stdin(if config.quiet { Stdio::null() } else { Stdio::inherit() })
             .stdout(if config.quiet { Stdio::null() } else { Stdio::inherit() })
             .stderr(if config.quiet { Stdio::null() } else { Stdio::inherit() })
-            .status()
-            .unwrap();
+            .status() {
+                Ok(s) => s,
+                Err(err) => panic!("Failed to execute command: {}", err)
+        };
 
         match status.code() {
             Some(code) if code == config.expected_exitcode => {
