@@ -10,6 +10,7 @@ use clap::{App, AppSettings, Arg};
 struct RetryConfig<'a> {
     max: u32,
     interval: Duration,
+    expected_exitcode: i32,
     cmd: Vec<&'a str>,
 }
 
@@ -21,17 +22,13 @@ fn retry(config: RetryConfig) {
             .status()
             .unwrap();
 
-        if status.success() {
-            println!("Successfully ran command. Abort retry.");
-            break;
-        } else {
-            match status.code() {
-                Some(code) => println!("[Retry {}] Command failed with exit code {}", i, code),
-                None => println!(
-                    "[Retry {}] Command failed because it was termianted by a signal",
-                    i
-                ),
+        match status.code() {
+            Some(code) if code == config.expected_exitcode => {
+                println!("Successfully ran command. Abort retry.");
+                break;
             }
+            Some(code) => println!("[Retry {}] Command failed with exit code {}", i, code),
+            None => println!("[Retry {}] Command failed because it was termianted by a signal", i),
         }
 
         if i != config.max {
@@ -53,7 +50,8 @@ fn main() {
                 .long("max")
                 .value_name("MAX_RETRIES")
                 .help("Maximum retries. Use 0 for unlimited retries")
-                .takes_value(true),
+                .takes_value(true)
+                .default_value("5"),
         )
         .arg(
             Arg::with_name("interval")
@@ -61,7 +59,17 @@ fn main() {
                 .long("interval")
                 .value_name("INTERVAL")
                 .help("Interval in seconds between the retries")
-                .takes_value(true),
+                .takes_value(true)
+                .default_value("1"),
+        )
+        .arg(
+            Arg::with_name("exit_code")
+                .short("c")
+                .long("exit-code")
+                .value_name("EXIT_CODE")
+                .help("The expected exit code to stop retrying")
+                .takes_value(true)
+                .default_value("0"),
         )
         .setting(AppSettings::TrailingVarArg)
         .arg(
@@ -82,11 +90,16 @@ fn main() {
         Ok(u) => u,
         Err(_) => panic!("The given INTERVAL option must be an Integer"),
     });
+    let exitcode = match matches.value_of("exit_code").unwrap_or_default().parse() {
+        Ok(c) => c,
+        Err(_) => panic!("The given exit code option must be an Integer")
+    };
     let cmd: Vec<&str> = matches.values_of("command").unwrap().collect();
 
     let config = RetryConfig {
         max: max_retries,
         interval: interval,
+        expected_exitcode: exitcode,
         cmd: cmd,
     };
 
