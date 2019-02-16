@@ -9,5 +9,9 @@ homepage = "https://github.com/timofurrer/retry"
 repository = "https://github.com/timofurrer/retry"
 edition = "2018"
 
+[[bin]]
+name = "retry"
+path = "src/main.rs"
+
 [dependencies]
 clap = "2"
