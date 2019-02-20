@@ -58,11 +58,11 @@ fn main() {
         )
         .get_matches();
 
-    let max_retries: u32 = match matches.value_of("max").unwrap_or("5").parse() {
+    let max_retries: u32 = match matches.value_of("max").unwrap_or_default().parse() {
         Ok(u) => u,
         Err(_) => panic!("The given MAX option must be an Integer"),
     };
-    let interval = Duration::from_secs(match matches.value_of("interval").unwrap_or("1").parse() {
+    let interval = Duration::from_secs(match matches.value_of("interval").unwrap_or_default().parse() {
         Ok(u) => u,
         Err(_) => panic!("The given INTERVAL option must be an Integer"),
     });
