@@ -1,0 +1,25 @@
+name: Release
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  build:
+    name: Compile
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v3
+      - name: Setup | Rust
+        uses: ATiltedTree/setup-rust@v1
+        with:
+          rust-version: stable
+
+      - name: Build | Compile
+        run: cargo build --bin dist/try-linux-x64
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: binary
+          path: ./dist/
