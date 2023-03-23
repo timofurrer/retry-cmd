@@ -25,11 +25,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install latest stable
-        uses: actions-rs/toolchain@v1
+      - uses: brndnmtthws/rust-action-rustup@v1
         with:
           toolchain: stable
-          override: true
 
       - uses: actions-rs/cargo@v1
         with:
