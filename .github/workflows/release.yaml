@@ -29,6 +29,8 @@ jobs:
         with:
           toolchain: stable
 
+      - uses: Swatinem/rust-cache@v2
+
       - uses: actions-rs/cargo@v1
         with:
           command: build
