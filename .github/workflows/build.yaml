@@ -9,15 +9,18 @@ jobs:
     name: Compile
     runs-on: ubuntu-latest
     steps:
-      - name: Setup | Checkout
-        uses: actions/checkout@v3
-      - name: Setup | Rust
-        uses: ATiltedTree/setup-rust@v1
-        with:
-          rust-version: stable
+      - uses: actions/checkout@v3
 
-      - name: Build | Compile
-        run: cargo build --bin dist/try-linux-x64
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --all-features --bin dist/try-linux-x64
+        env:
+          CARGO_TARGET_DIR: "./dist/"
 
       - uses: actions/upload-artifact@v3
         with:
