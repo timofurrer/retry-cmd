@@ -18,10 +18,8 @@ jobs:
         with:
           command: build
           args: --release --bin retry
-        env:
-          CARGO_TARGET_DIR: "./dist/"
 
       - uses: actions/upload-artifact@v3
         with:
           name: binary
-          path: dist/release/retry
+          path: target/release/retry
